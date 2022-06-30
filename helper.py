@@ -1,7 +1,19 @@
 import variableHandler
+from labelHandler import LabelHandler
 
-variablesHandler = variableHandler.VariableHandler()
-variables = {}
+var_handler = variableHandler.VariableHandler()
+label_handler = LabelHandler()
+
+def handle_vars(filename):
+    #Get variable list
+    file_counter = var_handler.execute(filename)
+    #Convert variables to binary
+    return file_counter
+
+def handle_labels(filename):
+    #Get label list
+    label_handler.execute(filename)
+
 def convert_reg_to_binary(reg):
     #Strip R from register name
     reg = reg[1:]
@@ -23,12 +35,13 @@ def convert_value_to_binary(val):
 def convert_address_to_binary(address):
     #Convert to binary
     try:
-        address = bin(int(address))[2:]
-        #Pad with zeros
-        address = address.zfill(8)
-        return address
+        addr = bin(int(address))[2:]
     except Exception:
-        if address in variables:
-            return variables[address]
+        if addr in var_handler.variables:
+            addr =  var_handler.variables[address]
+        elif address in label_handler.labels:
+            addr = label_handler.labels[address]
         else:
             raise ValueError("Address not found")
+        #Pad with zeros
+    return addr.zfill(8)

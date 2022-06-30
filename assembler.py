@@ -1,7 +1,4 @@
-variables = {}
-
-from helper import convert_address_to_binary, convert_value_to_binary, convert_reg_to_binary
-
+from helper import convert_address_to_binary, convert_value_to_binary, convert_reg_to_binary, handle_vars,handle_labels
 class Instruction:
     def __init__(self, type, code, secondary_code=None):
         self.type = type
@@ -22,11 +19,21 @@ class Instruction:
             return self.code+'000'+convert_address_to_binary(command[1])
         else:
             return self.code+('0'*11)
-
-class Variable:
-    #TODO
-    pass
-
+    
+    def assemble(self,line):
+        if self.secondary_code is None:
+            return self.final_assemble(line)
+        else:
+            if '$' in line:
+                self.type = 'B'
+                temp = self.code
+                self.secondary_code = temp
+                machine_code = self.final_assemble(line)
+                self.code = 'C'
+                self.code = temp
+                return machine_code                
+            else:
+                return self.final_assemble(line)
 
 instructions = {'add':Instruction('A','10000'),
                 'sub':Instruction('A','10001'),
@@ -47,3 +54,23 @@ instructions = {'add':Instruction('A','10000'),
                 'jgt':Instruction('E','01101'),
                 'jeq':Instruction('E','01111'),
                 'hlt':Instruction('F','01010'),}
+
+file = "input.txt"
+file_counter = handle_vars(file)
+handle_labels(file)
+out_file = open("output.txt","w")
+with open(file,"r") as f:
+    for i,line in enumerate(f):
+        #ignore vars
+        if i < file_counter:
+            continue
+        #get rid of whitespace and labels
+        line = line.strip()
+        line = line.split(':')[-1]
+        command = line.split()[0]
+        if command in instructions:
+            out_file.write(instructions[command].assemble(line)+"\n")
+        else:
+            out_file.close()
+            raise ValueError("Invalid command")
+out_file.close()
