@@ -1,3 +1,7 @@
+import variableHandler
+
+variablesHandler = variableHandler.VariableHandler()
+variables = {}
 def convert_reg_to_binary(reg):
     #Strip R from register name
     reg = reg[1:]
