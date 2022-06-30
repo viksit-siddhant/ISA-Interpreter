@@ -27,7 +27,7 @@ class Instruction:
             if '$' in line:
                 self.type = 'B'
                 temp = self.code
-                self.secondary_code = temp
+                self.code = self.secondary_code
                 machine_code = self.final_assemble(line)
                 self.code = 'C'
                 self.code = temp
@@ -37,7 +37,7 @@ class Instruction:
 
 instructions = {'add':Instruction('A','10000'),
                 'sub':Instruction('A','10001'),
-                'mov':Instruction('B','10010','10011'),
+                'mov':Instruction('C','10011','10010'),
                 'ld':Instruction('D','10100'),
                 'st':Instruction('D','10101'),
                 'mul':Instruction('A','10110'),
