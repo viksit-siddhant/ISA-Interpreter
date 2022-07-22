@@ -1,0 +1,14 @@
+var x
+var y
+var z
+ld r0 x
+ld r1 y
+ls r0 $3
+rs r0 $3
+rs r1 $5
+st r1 y
+st r0 x
+add r1 r0 r2
+st r2 z
+hlt
+

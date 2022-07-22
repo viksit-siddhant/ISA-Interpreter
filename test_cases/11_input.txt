@@ -1,0 +1,15 @@
+var x
+var y
+ld r0 x
+ld r1 y
+add r1 r0 r2
+mov r3 $2
+mov r6 $1
+mov r4 $0
+
+
+l1: mul r2 r3 r2
+sub r1 r6 r5
+cmp r5 r4
+jgt l1
+hlt

@@ -1,0 +1,12 @@
+mov r0 $1
+mov r1 $5
+mov r2 $100
+abc: and r1 r2 r3
+def: xor r1 r2 r4
+fgh: not r5 r4
+cmp r4 r3
+jgt abc
+je def
+jlt fgh
+hlt
+

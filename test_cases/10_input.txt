@@ -1,0 +1,21 @@
+var a
+var b
+var c
+ld r0 a
+ld r1 b
+st r1 b
+
+
+
+
+
+
+
+
+
+
+
+
+
+hlt
+
