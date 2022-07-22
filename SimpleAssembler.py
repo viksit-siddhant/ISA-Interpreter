@@ -1,3 +1,4 @@
+from tkinter import W
 from typing import Optional
 
 
@@ -41,6 +42,23 @@ class Instruction:
             return machine_code
         else:
             return self.final_assemble(line)
+
+def convert_float(num):
+    mantissa = ""
+    greatest_bit = -5
+    while 2**greatest_bit <= num:
+        greatest_bit += 1
+    greatest_bit -= 1
+    num /= 2**greatest_bit
+    num -= 1
+    for i in range(5):
+        num *= 2
+        if (num < 1):
+            mantissa += "0"
+        else:
+            mantissa += "1"
+            num -= 1
+    return greatest_bit, mantissa
 
 
 def throw_error(error: str, message: str):
@@ -163,7 +181,6 @@ for i, line in enumerate(ASSEMBLY_CODE):
             throw_error("Syntax", "Empty Label Declaration encountered on Line {}")
         else:
             LABELS[label] = i
-
 
 for LINE_NUM, line in enumerate(ASSEMBLY_CODE, start=1):
     line = line.split(":")[-1]
