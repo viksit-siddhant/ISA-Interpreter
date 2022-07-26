@@ -73,11 +73,11 @@ def handle_register(register: str, flags_allowed: Optional[bool]=False) -> str:
 
 
 def handle_float(immediate: float) -> str:
-    if not 0 <= immediate <= 15.75:
+    if not 1 <= immediate <= 252:
         throw_error("Overflow", "Immediate value used on Line {} is out of bounds")
 
     mantissa = ""
-    exponent = -5
+    exponent = 0
     while 2**exponent <= immediate:
         exponent += 1
 
@@ -92,11 +92,9 @@ def handle_float(immediate: float) -> str:
             mantissa += "1"
             num -= 1
 
-    exponents = {
-        -4: "100", -3: "101", -2: "110", -1: "111", 0: "000", 1: "001", 2: "010", 3: "011"
-    }
-
-    return exponents[exponent] + mantissa
+    if (num != 0):
+        throw_error("Overflow", "Immediate value used on Line {} cannot be represented properly")
+    return bin(exponent)[2:].zfill(3) + mantissa
 
 
 def handle_immediate(immediate: str, opcode: str) -> str:
