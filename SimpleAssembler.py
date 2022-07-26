@@ -1,4 +1,3 @@
-from tkinter import W
 from typing import Optional
 
 
@@ -42,23 +41,6 @@ class Instruction:
             return machine_code
         else:
             return self.final_assemble(line)
-
-def convert_float(num):
-    mantissa = ""
-    greatest_bit = -5
-    while 2**greatest_bit <= num:
-        greatest_bit += 1
-    greatest_bit -= 1
-    num /= 2**greatest_bit
-    num -= 1
-    for i in range(5):
-        num *= 2
-        if (num < 1):
-            mantissa += "0"
-        else:
-            mantissa += "1"
-            num -= 1
-    return greatest_bit, mantissa
 
 
 def throw_error(error: str, message: str):
@@ -136,6 +118,7 @@ INSTRUCTIONS: dict[str, Instruction] = {
 }
 
 MACHINE_CODE: list[str] = []
+variables = codes = 0
 
 temp_code: list[str] = []
 counter = 0
@@ -147,6 +130,13 @@ while True:
     if line != "":
         temp_code.append(line)
         counter += 1 if "var" not in line else 0
+        if "var" not in line:
+            codes += 1
+        else:
+            variables += 1
+    if variables + codes > 256:
+        LINE_NUM = 256
+        throw_error("Memory-Overflow", "256 Bytes Memory Limit Exceeded after Line {}")
 
 
 ASSEMBLY_CODE: list[str] = []
@@ -162,8 +152,8 @@ for LINE_NUM, line in enumerate(temp_code, start=1):
 
         if not variable.isalnum() and not (not variable[0].isalpha() and variable[0] == "_"):
             throw_error("Syntax", "Invalid Variable name used on Line {}")
-        elif counter > 512:
-            throw_error("Memory-Overflow", "512 Bytes Memory Limit Exceeded after Line")
+        elif counter > 256:
+            throw_error("Memory-Overflow", "256 Bytes Memory Limit Exceeded after Line {}")
         else:
             VARIABLES[variable] = counter
             counter += 1
@@ -181,6 +171,7 @@ for i, line in enumerate(ASSEMBLY_CODE):
             throw_error("Syntax", "Empty Label Declaration encountered on Line {}")
         else:
             LABELS[label] = i
+
 
 for LINE_NUM, line in enumerate(ASSEMBLY_CODE, start=1):
     line = line.split(":")[-1]
@@ -207,7 +198,5 @@ for LINE_NUM, line in enumerate(ASSEMBLY_CODE, start=1):
         throw_error("Syntax", "Invalid operation encountered on Line {}")
 
 
-with open("output.txt", "w") as out_file:
-    for line in MACHINE_CODE:
-        print(line)
-        out_file.write(line + "\n")
+for line in MACHINE_CODE:
+    print(line)
