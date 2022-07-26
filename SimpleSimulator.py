@@ -234,7 +234,7 @@ def execution_engine(instruction: str, pc: int) -> tuple[int, bool]:
 
     elif opcode == "11111": #unconditional jump
         mem = type_E(instruction)
-        pc = MEMORY[int(mem, base=2)]
+        pc = int(mem, base=2)
         REGISTER_FILE[7] = "0" * 16
 
 

@@ -39,12 +39,16 @@ def handle_comparison(value1: int, value2: int) -> None:
 def binf(immediate: float) -> str:
     mantissa = ""
     exponent = -5
+    if not 1 <= immediate <= 252:
+        handle_overflow()
+        if immediate < 1:
+            return "0"*8
+        else:
+            return "1"*8
     while 2**exponent <= immediate:
         exponent += 1
-
     exponent -= 1
     num = immediate / 2**exponent - 1
-
     for _ in range(5):
         num *= 2
         if num < 1:
@@ -52,26 +56,18 @@ def binf(immediate: float) -> str:
         else:
             mantissa += "1"
             num -= 1
-
-    exponents = {
-        -4: "100", -3: "101", -2: "110", -1: "111", 0: "000", 1: "001", 2: "010", 3: "011"
-    }
-
-    return exponents[exponent] + mantissa
+    if num != 0:
+        handle_overflow()
+    return bin(exponent)[2:] + mantissa
 
 
 def handle_float(value: str) -> float:
     exponent, mantissa = value[:3], value[3:]
-    exponents = {
-        "100": -4, "101": -3, "110": -2, "111": -1, "000": 0, "001": 1, "010": 2, "011": 3
-    }
-
     value = 0
     for i in range(5):
-        value += int(mantissa[i]) * 2**(i-5)
+        value += int(mantissa[i]) * 2**(-i-1)
 
-    return (1 + value) * 2**exponents[exponent]
-
+    return (1 + value) * 2**int(exponent,base=2)
 
 def type_A(instruction: str) -> list[str, str, str]:
     opcode = instruction[:5]
@@ -116,8 +112,7 @@ def execution_engine(instruction: str, pc: int) -> tuple[int, bool]:
         value1 = handle_float(register_file(reg1)[8:])
         value2 = handle_float(register_file(reg2)[8:])
         value = value1 + value2
-
-        if not 0 <= value <= 15.75:
+        if not 1 <= value <= 252:
             handle_overflow()
         else:
             REGISTER_FILE[register(reg3)] = binf(value).zfill(16)
@@ -133,7 +128,7 @@ def execution_engine(instruction: str, pc: int) -> tuple[int, bool]:
 
         value = value1 - value2
 
-        if value1 < value2:
+        if value1 < value2 - 1:
             handle_overflow()
             value = 0
         else:
@@ -166,7 +161,6 @@ def execution_engine(instruction: str, pc: int) -> tuple[int, bool]:
         value2 = int(register_file(reg2), base=2)
 
         value = bin(value1 - value2)[2:].zfill(16)
-
         if value1 < value2:
             handle_overflow()
             value = "0" * 16
@@ -305,7 +299,7 @@ def execution_engine(instruction: str, pc: int) -> tuple[int, bool]:
 
     elif opcode == "11111": # unconditional jump
         mem = type_E(instruction)
-        pc = MEMORY[int(mem, base=2)]
+        pc = int(mem, base=2)
         REGISTER_FILE[7] = "0" * 16
 
 

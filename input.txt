@@ -1,0 +1,11 @@
+var final
+mov R1 $4
+mov R3 $1
+movf R2 $1.5
+loop: sub R1 R3 R1
+addf R2 R2 R2
+cmp R5 R1
+je loop_exit
+jmp loop
+loop_exit: st R2 final 
+hlt
