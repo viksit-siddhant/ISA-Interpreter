@@ -1,6 +1,4 @@
-from tkinter import W
 from typing import Optional
-
 
 class Instruction:
     def __init__(self, _type: str, opcode: str, secondary_opcode: Optional[str]=None):
