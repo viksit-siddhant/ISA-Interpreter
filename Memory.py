@@ -42,13 +42,13 @@ while True:
         print()
 
         min_bits = math.ceil(math.log2(num_addr))
-        len_opcode = len_inst + len_reg + min_bits
-        filler = len_opcode - len_inst - 2*len_reg
+        len_opcode = len_inst - len_reg - min_bits
+        filler = len_inst - len_opcode - 2*len_reg
 
-        print(f"Minimum number of bits to represent memory: {min_bits} Bits")
+        print(f"Minimum number of bits to represent memory (P): {min_bits} Bits")
         print(f"Number of bits for opcode (Q): {len_opcode} Bits")
         print(f"Number of filler bits for Instruction Type 2 (R): {filler} Bits")
-        print(f"Maximum number of instructions: {2**len_inst}")
+        print(f"Maximum number of instructions: {2**len_opcode}")
         print(f"Maximum number of registers: {2**len_reg}")
 
 
