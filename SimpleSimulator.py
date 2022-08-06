@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import datetime as dt
+import os
 
 
 def program_counter(pc: int) -> str:
@@ -455,6 +455,9 @@ axes.set_ylabel("Memory Addresses Accessed")
 axes.set_xticks(CYCLES)
 axes.set_yticks(y_range)
 axes.set_yticklabels([bin(i)[2:].zfill(8) for i in y_range])
-
 axes.grid(True, zorder=1)
-plt.savefig(f"{dt.datetime.now().strftime('%H-%M-%S')}.jpg")
+
+TEST_CASE: int = 1
+while os.path.exists(f"Test-Case {str(TEST_CASE).zfill(3)}.jpg"):
+    TEST_CASE += 1
+plt.savefig(f"Test-Case {str(TEST_CASE).zfill(3)}.jpg")
